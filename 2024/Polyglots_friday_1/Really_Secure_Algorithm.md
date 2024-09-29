@@ -103,22 +103,26 @@ Here are the math details if you are interested :)
 
 The flag can be written in a base $n$ representation:
 
-$$f = F_0 + F_1*n + F_2*n^2 + ... + F_k * n^k$$
+$f = F_0 + F_1 * n + F_2 * n^2 + ... + F_k * n^k$
 
 We will be encrypting one digit after the other, but for this we need a way to extract each digit. 
 We can do the following:
+
 $$F_0 = f\mod{n}$$
 
-Then to get $F_1$ we take the integer division of our $f$ by $n$, followed by a new modulo $n$ and so on.
+Then to get $F_1$ we take the integer division by our $f$ by $n$ to remove $F_0$, followed by a new modulo $n$ to get rid of the other digits and so on.
 
-Once we have the digits, we encrypt them using the RSA formula:
+Once we have all the digits, we encrypt them using the RSA formula:
+
 $$C_0 = F_0^e \mod{n}$$
+
 $$...$$
+
 $$C_k = F_k^e \mod{n}$$
 
 And finally we add them up again to obtain our ciphertext:
 
-$$C = C_0 + C_1*n + C_2*n^2 + ... + C_k * n^k$$
+$$C = C_0 + C_1 * n + C_2 * n^2 + ... + C_k * n^k$$
 
 So to decrypt it we need to do the same operations but decrypting each digit instead of encrypting.
 
