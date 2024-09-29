@@ -64,7 +64,7 @@ q = 86257
 phi_n = (p - 1) * (q - 1)
 d = mod_inverse(e, phi_n)
 ```
-We can test that our `d` is correct by encrypting then decrypting some dummy value
+We can test that our `d` is correct by encrypting then decrypting some dummy value:
 
 ```python
 value = 1234
