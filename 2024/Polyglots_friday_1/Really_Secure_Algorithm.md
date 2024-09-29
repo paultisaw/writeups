@@ -78,10 +78,28 @@ because as we see in the provided script, there is some chunking going on.
 Since the flag representation is bigger than `n`, if we would just encrypt it as is we would lose information.
 So we need to decrypt it chunk by chunk.
 
-You can read the collapsed section below if you are interested in the small bit of math going on (which took me some time to grasp) ;)
-<details>
+You can read the appendix section below if you are interested in the small bit of math going on (which took me some time to grasp) ;)
 
-<summary>Details</summary>
+We can decrypt the flag with the following snippet:
+```python
+with open('flag.enc', 'r') as f:
+    c = int(f.read().strip())
+
+flag = 0
+
+while c > 0:
+    flag = flag * n + pow(c % n, d, n)
+    c //= n
+
+print(str(flag.to_bytes(64, byteorder='big'), 'utf-8'))
+```
+
+**Flag:** `EPFL{small_numbers_make_rsa_go_nooooooo}`
+
+And so we get the flag ! :D
+
+## Appendix
+Here are the math details if you are interested :)
 
 The flag can be written in a base $n$ representation:
 
@@ -107,22 +125,3 @@ So to decrypt it we need to do the same operations but decrypting each digit ins
 >Note that this is not a standard mode of operation of RSA because
 >it is usually used in combination with a block cipher to do the heavy lifting, 
 >and the symmetric key is typically much smaller than $n$.
-</details>
-
-Finally, we decrypt the flag with the following snippet:
-```python
-with open('flag.enc', 'r') as f:
-    c = int(f.read().strip())
-
-flag = 0
-
-while c > 0:
-    flag = flag * n + pow(c % n, d, n)
-    c //= n
-
-print(str(flag.to_bytes(64, byteorder='big'), 'utf-8'))
-```
-
-**Flag:** `EPFL{small_numbers_make_rsa_go_nooooooo}`
-
-And so we get the flag ! :D
