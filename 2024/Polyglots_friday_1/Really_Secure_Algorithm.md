@@ -64,7 +64,7 @@ q = 86257
 phi_n = (p - 1) * (q - 1)
 d = mod_inverse(e, phi_n)
 ```
-We can test that our `d` is correct by encrypting then decrypting some dummy value
+We can test that our `d` is correct by encrypting then decrypting some dummy value:
 
 ```python
 value = 1234
@@ -78,38 +78,9 @@ because as we see in the provided script, there is some chunking going on.
 Since the flag representation is bigger than `n`, if we would just encrypt it as is we would lose information.
 So we need to decrypt it chunk by chunk.
 
-You can read the collapsed section below if you are interested in the small bit of math going on (which took me some time to grasp) ;)
-<details>
+You can read the appendix section below if you are interested in the small bit of math going on (which took me some time to grasp) ;)
 
-<summary>Details</summary>
-
-The flag can be written in a base $n$ representation:
-
-$$f = F_0 + F_1*n + F_2*n^2 + ... + F_k * n^k$$
-
-We will be encrypting one digit after the other, but for this we need a way to extract each digit. 
-We can do the following:
-$$F_0 = f\mod{n}$$
-
-Then to get $F_1$ we take the integer division of our $f$ by $n$, followed by a new modulo $n$ and so on.
-
-Once we have the digits, we encrypt them using the RSA formula:
-$$C_0 = F_0^e \mod{n}$$
-$$...$$
-$$C_k = F_k^e \mod{n}$$
-
-And finally we add them up again to obtain our ciphertext:
-
-$$C = C_0 + C_1*n + C_2*n^2 + ... + C_k * n^k$$
-
-So to decrypt it we need to do the same operations but decrypting each digit instead of encrypting.
-
->Note that this is not a standard mode of operation of RSA because
->it is usually used in combination with a block cipher to do the heavy lifting, 
->and the symmetric key is typically much smaller than $n$.
-</details>
-
-Finally, we decrypt the flag with the following snippet:
+We can decrypt the flag with the following snippet:
 ```python
 with open('flag.enc', 'r') as f:
     c = int(f.read().strip())
@@ -126,3 +97,35 @@ print(str(flag.to_bytes(64, byteorder='big'), 'utf-8'))
 **Flag:** `EPFL{small_numbers_make_rsa_go_nooooooo}`
 
 And so we get the flag ! :D
+
+## Appendix
+Here are the math details if you are interested :)
+
+The flag can be written in a base $n$ representation:
+
+$f = F_0 + F_1 * n + F_2 * n^2 + ... + F_k * n^k$
+
+We will be encrypting one digit after the other, but for this we need a way to extract each digit. 
+We can do the following:
+
+$$F_0 = f\mod{n}$$
+
+Then to get $F_1$ we take the integer division by our $f$ by $n$ to remove $F_0$, followed by a new modulo $n$ to get rid of the other digits and so on.
+
+Once we have all the digits, we encrypt them using the RSA formula:
+
+$$C_0 = F_0^e \mod{n}$$
+
+$$...$$
+
+$$C_k = F_k^e \mod{n}$$
+
+And finally we add them up again to obtain our ciphertext:
+
+$$C = C_0 + C_1 * n + C_2 * n^2 + ... + C_k * n^k$$
+
+So to decrypt it we need to do the same operations but decrypting each digit instead of encrypting.
+
+>Note that this is not a standard mode of operation of RSA because
+>it is usually used in combination with a block cipher to do the heavy lifting, 
+>and the symmetric key is typically much smaller than $n$.
